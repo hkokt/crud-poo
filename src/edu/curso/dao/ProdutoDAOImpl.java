@@ -27,7 +27,6 @@ public class ProdutoDAOImpl implements ProdutoDAO {
 	public Produto adicionar(Produto prod) throws SQLException {
 		String sql = "INSERT INTO produtos " + "(nome, preco, marca) " + "VALUES (?, ?, ?)";
 		PreparedStatement st = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-		System.out.println(st.toString());
 		st.setString(1, prod.getNome());
 		st.setDouble(2, prod.getPreco());
 		st.setString(3, prod.getMarca());

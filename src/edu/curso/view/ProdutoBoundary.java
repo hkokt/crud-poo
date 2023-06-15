@@ -13,6 +13,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -21,6 +23,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -83,9 +86,9 @@ public class ProdutoBoundary extends Application {
 					final Button btnExcluir = new Button("Excluir");
 					{
 						btnExcluir.setOnAction(e -> {
-							Produto l = tv.getItems().get(getIndex());
+							Produto prod = tv.getItems().get(getIndex());
 							try {
-								control.excluir(l);
+								control.excluir(prod);
 							} catch (SQLException err) {
 								Alert a = new Alert(AlertType.ERROR,
 										"Erro ao excluir o registro," + "contate o Administrador", ButtonType.OK);
@@ -111,7 +114,7 @@ public class ProdutoBoundary extends Application {
 
 		colAcoes.setCellFactory(callBack);
 
-		double quarto = 600.0 / 4.0;
+		double quarto = 800.0 / 4.0;
 		colMarca.setPrefWidth(quarto);
 		colPreco.setPrefWidth(quarto);
 		colNome.setPrefWidth(quarto);
@@ -121,6 +124,7 @@ public class ProdutoBoundary extends Application {
 		tv.setItems(control.getObsLProdutos());
 
 		tv.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Produto>() {
+
 			@Override
 			public void onChanged(Change<? extends Produto> prod) {
 				if (!prod.getList().isEmpty()) {
@@ -140,39 +144,50 @@ public class ProdutoBoundary extends Application {
 			a.showAndWait();
 			e.printStackTrace();
 		}
-		BorderPane principal = new BorderPane();
-		Scene scn = new Scene(principal, 600, 400);
-		
+
+		TabPane tabPane = new TabPane();
+
 		GridPane grid = new GridPane();
-		principal.setTop(grid);
-		principal.setCenter(tv);
 		grid.add(new Label("Nome: "), 0, 0);
 		grid.add(txtNome, 1, 0);
 		grid.add(new Label("Preço: "), 0, 1);
 		grid.add(txtPreco, 1, 1);
 		grid.add(new Label("Marca: "), 0, 2);
 		grid.add(txtMarca, 1, 2);
-		
+
 		ligacoes();
 		abastecerTableView();
-		
+
 		Button btnNovo = new Button("Novo");
-		btnNovo.setOnAction( e -> control.novo() );
-		
+		btnNovo.setOnAction(e -> control.novo());
+
 		Button btnSalvar = new Button("Salvar");
 		btnSalvar.setOnAction(e -> adicionar());
-		
+
 		Button btnPesquisar = new Button("Pesquisar");
 		btnPesquisar.setOnAction(e -> pesquisar());
-		
+
 		FlowPane painelBotoes = new FlowPane();
 		painelBotoes.getChildren().addAll(btnSalvar, btnPesquisar);
-		
+
 		grid.add(btnNovo, 0, 3);
 		grid.add(painelBotoes, 1, 3);
-		
+
+		Tab tab1 = new Tab();
+		tab1.setText("produtos");
+		tab1.setContent(grid); 
+
+		Tab tab2 = new Tab();
+		tab2.setText("funcionarios");
+		tab2.setContent(new StackPane()); 
+
+		tabPane.getTabs().addAll(tab1, tab2);
+
+		StackPane root = new StackPane();
+		root.getChildren().add(tabPane);
+
+		Scene scn = new Scene(root, 800, 600);
 		stage.setScene(scn);
-		stage.setTitle("Produtos Mercado");
 		stage.show();
 	}
 

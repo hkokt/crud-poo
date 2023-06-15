@@ -17,12 +17,10 @@ import javafx.collections.ObservableList;
 
 public class ProdutoController {
 
-	private LongProperty id = new SimpleLongProperty(0);
-	private StringProperty nome = new SimpleStringProperty("");
-	private DoubleProperty preco = new SimpleDoubleProperty(0);
-	private StringProperty marca = new SimpleStringProperty("");
-
-	private long contadorId = 1;
+	private LongProperty id = new SimpleLongProperty();
+	private StringProperty nome = new SimpleStringProperty();
+	private DoubleProperty preco = new SimpleDoubleProperty();
+	private StringProperty marca = new SimpleStringProperty();
 
 	private ObservableList<Produto> obsListProd = FXCollections.observableArrayList();
 	private ProdutoDAO prodDAO;
