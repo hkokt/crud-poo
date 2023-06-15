@@ -2,7 +2,9 @@ package edu.curso.view;
 
 import java.sql.SQLException;
 
+import edu.curso.controller.FuncionarioController;
 import edu.curso.controller.ProdutoController;
+import edu.curso.model.Funcionario;
 import edu.curso.model.Produto;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -35,12 +37,12 @@ public class ProdutoBoundary extends Application {
 	private TextField txtPreco = new TextField();
 	private TextField txtMarca = new TextField();
 
-	private ProdutoController control;
-	private TableView<Produto> tv = new TableView<>();
+	private ProdutoController controlProd;
+	private TableView<Produto> tvProd = new TableView<>();
 
-	public void adicionar() {
+	public void adicionarProd() {
 		try {
-			control.adicionar();
+			controlProd.adicionar();
 		} catch (Exception e) {
 			Alert a = new Alert(AlertType.ERROR, "Erro ao gravar o livro," + "contate o Administrador", ButtonType.OK);
 			a.showAndWait();
@@ -48,9 +50,9 @@ public class ProdutoBoundary extends Application {
 		}
 	}
 
-	public void pesquisar() {
+	public void pesquisarProd() {
 		try {
-			control.pesquisar();
+			controlProd.pesquisar();
 		} catch (SQLException e) {
 			Alert a = new Alert(AlertType.ERROR, "Erro ao pesquisar no banco de dados," + "contate o Administrador",
 					ButtonType.OK);
@@ -60,15 +62,15 @@ public class ProdutoBoundary extends Application {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void ligacoes() {
-		Bindings.bindBidirectional(txtNome.textProperty(), control.nomeProperty());
-		Bindings.bindBidirectional(txtPreco.textProperty(), control.precoProperty(),
+	public void ligacoesProdutos() {
+		Bindings.bindBidirectional(txtNome.textProperty(), controlProd.nomeProperty());
+		Bindings.bindBidirectional(txtPreco.textProperty(), controlProd.precoProperty(),
 				(StringConverter) new DoubleStringConverter());
-		Bindings.bindBidirectional(txtMarca.textProperty(), control.marcaProperty());
+		Bindings.bindBidirectional(txtMarca.textProperty(), controlProd.marcaProperty());
 	}
 
 	@SuppressWarnings("unchecked")
-	public void abastecerTableView() {
+	public void abastecerTableViewProdutos() {
 		TableColumn<Produto, String> colNome = new TableColumn<>("Nome");
 		colNome.setCellValueFactory(new PropertyValueFactory<Produto, String>("nome"));
 		TableColumn<Produto, String> colMarca = new TableColumn<>("Marca");
@@ -86,9 +88,9 @@ public class ProdutoBoundary extends Application {
 					final Button btnExcluir = new Button("Excluir");
 					{
 						btnExcluir.setOnAction(e -> {
-							Produto prod = tv.getItems().get(getIndex());
+							Produto prod = tvProd.getItems().get(getIndex());
 							try {
-								control.excluir(prod);
+								controlProd.excluir(prod);
 							} catch (SQLException err) {
 								Alert a = new Alert(AlertType.ERROR,
 										"Erro ao excluir o registro," + "contate o Administrador", ButtonType.OK);
@@ -120,15 +122,125 @@ public class ProdutoBoundary extends Application {
 		colNome.setPrefWidth(quarto);
 		colAcoes.setPrefWidth(quarto);
 
-		tv.getColumns().addAll(colNome, colPreco, colMarca, colAcoes);
-		tv.setItems(control.getObsLProdutos());
+		tvProd.getColumns().addAll(colNome, colPreco, colMarca, colAcoes);
+		tvProd.setItems(controlProd.getObsLProdutos());
 
-		tv.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Produto>() {
-
+		tvProd.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Produto>() {
 			@Override
 			public void onChanged(Change<? extends Produto> prod) {
 				if (!prod.getList().isEmpty()) {
-					control.fromEntity(prod.getList().get(0));
+					controlProd.fromEntity(prod.getList().get(0));
+				}
+			}
+		});
+	}
+
+	private TextField txtNomeFun = new TextField();
+	private TextField txtCargo = new TextField();
+	private TextField txtCpf = new TextField();
+	private TextField txtEmail = new TextField();
+	private TextField txtCelular = new TextField();
+
+	private FuncionarioController controlFun;
+	private TableView<Funcionario> tvFun = new TableView<>();
+
+	public void adicionarFun() {
+		try {
+			controlFun.adicionar();
+		} catch (Exception e) {
+			Alert a = new Alert(AlertType.ERROR, "Erro ao gravar o livro," + "contate o Administrador", ButtonType.OK);
+			a.showAndWait();
+			e.printStackTrace();
+		}
+	}
+
+	public void pesquisarFun() {
+		try {
+			controlFun.pesquisar();
+		} catch (SQLException e) {
+			Alert a = new Alert(AlertType.ERROR, "Erro ao pesquisar no banco de dados," + "contate o Administrador",
+					ButtonType.OK);
+			a.showAndWait();
+			e.printStackTrace();
+		}
+	}
+
+	public void ligacoesFuncionarios() {
+		Bindings.bindBidirectional(txtNomeFun.textProperty(), controlFun.nomeFunProperty());
+		Bindings.bindBidirectional(txtCargo.textProperty(), controlFun.cargoProperty());
+		Bindings.bindBidirectional(txtCpf.textProperty(), controlFun.cpfProperty());
+		Bindings.bindBidirectional(txtEmail.textProperty(), controlFun.emailProperty());
+		Bindings.bindBidirectional(txtCelular.textProperty(), controlFun.celularProperty());
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public void abastecerTableViewFuncionarios() {
+		TableColumn<Funcionario, String> colNome = new TableColumn<>("Nome");
+		colNome.setCellValueFactory(new PropertyValueFactory<Funcionario, String>("nome"));
+		TableColumn<Funcionario, String> colCargo = new TableColumn<>("Cargo");
+		colCargo.setCellValueFactory(new PropertyValueFactory<Funcionario, String>("cargo"));
+		TableColumn<Funcionario, String> colCpf = new TableColumn<>("Cpf");
+		colCpf.setCellValueFactory(new PropertyValueFactory<Funcionario, String>("cpf"));
+		TableColumn<Funcionario, String> colEmail = new TableColumn<>("Email");
+		colEmail.setCellValueFactory(new PropertyValueFactory<Funcionario, String>("email"));
+		TableColumn<Funcionario, String> colCelular = new TableColumn<>("Celular");
+		colCelular.setCellValueFactory(new PropertyValueFactory<Funcionario, String>("celular"));
+
+		TableColumn<Funcionario, Void> colAcoes = new TableColumn<>("Ações");
+		Callback<TableColumn<Funcionario, Void>, TableCell<Funcionario, Void>> callBack = new Callback<>() {
+
+			@Override
+			public TableCell<Funcionario, Void> call(TableColumn<Funcionario, Void> col) {
+				TableCell<Funcionario, Void> tCell = new TableCell<>() {
+
+					final Button btnExcluir = new Button("Excluir");
+					{
+						btnExcluir.setOnAction(e -> {
+							Funcionario fun = tvFun.getItems().get(getIndex());
+							try {
+								controlFun.excluir(fun);
+							} catch (SQLException err) {
+								Alert a = new Alert(AlertType.ERROR,
+										"Erro ao excluir o registro," + "contate o Administrador", ButtonType.OK);
+								a.showAndWait();
+								err.printStackTrace();
+							}
+						});
+					}
+
+					@Override
+					public void updateItem(Void item, boolean empty) {
+						super.updateItem(item, empty);
+						if (empty) {
+							setGraphic(null);
+						} else {
+							setGraphic(btnExcluir);
+						}
+					}
+				};
+				return tCell;
+			}
+		};
+
+		colAcoes.setCellFactory(callBack);
+
+		double quarto = 800.0 / 6.0;
+		colNome.setPrefWidth(quarto);
+		colCargo.setPrefWidth(quarto);
+		colCpf.setPrefWidth(quarto);
+		colEmail.setPrefWidth(quarto);
+		colCelular.setPrefWidth(quarto);
+		colAcoes.setPrefWidth(quarto);
+
+		tvFun.getColumns().addAll(colNome, colCargo, colCpf, colEmail, colCelular, colAcoes);
+		tvFun.setItems(controlFun.getObsFun());
+
+		tvFun.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Funcionario>() {
+			@Override
+			public void onChanged(Change<? extends Funcionario> fun) {
+				if (!fun.getList().isEmpty()) {
+					controlFun.fromEntity(fun.getList().get(0));
 				}
 			}
 		});
@@ -136,8 +248,10 @@ public class ProdutoBoundary extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+
 		try {
-			control = new ProdutoController();
+			controlProd = new ProdutoController();
+			controlFun = new FuncionarioController();
 		} catch (SQLException | ClassNotFoundException e) {
 			Alert a = new Alert(AlertType.ERROR, "Erro ao acessar o banco de dados," + "contate o Administrador",
 					ButtonType.OK);
@@ -145,9 +259,45 @@ public class ProdutoBoundary extends Application {
 			e.printStackTrace();
 		}
 
-		TabPane tabPane = new TabPane();
+		BorderPane tabFun = new BorderPane();
+
+		GridPane gridFun = new GridPane();
+		tabFun.setTop(gridFun);
+		tabFun.setCenter(tvFun);
+		gridFun.add(new Label("Nome: "), 0, 0);
+		gridFun.add(txtNomeFun, 1, 0);
+		gridFun.add(new Label("Cargo: "), 0, 1);
+		gridFun.add(txtCargo, 1, 1);
+		gridFun.add(new Label("Cpf: "), 0, 2);
+		gridFun.add(txtCpf, 1, 2);
+		gridFun.add(new Label("Email: "), 0, 3);
+		gridFun.add(txtEmail, 1, 3);
+		gridFun.add(new Label("Celular: "), 0, 4);
+		gridFun.add(txtCelular, 1, 4);
+
+		ligacoesFuncionarios();
+		abastecerTableViewFuncionarios();
+
+		Button btnNovoFun = new Button("Novo");
+		btnNovoFun.setOnAction(e -> controlFun.novo());
+
+		Button btnSalvarFun = new Button("Salvar");
+		btnSalvarFun.setOnAction(e -> adicionarFun());
+
+		Button btnPesquisarFun = new Button("Pesquisar");
+		btnPesquisarFun.setOnAction(e -> pesquisarFun());
+
+		FlowPane painelBotoesFun = new FlowPane();
+		painelBotoesFun.getChildren().addAll(btnSalvarFun, btnPesquisarFun);
+
+		gridFun.add(btnNovoFun, 0, 5);
+		gridFun.add(painelBotoesFun, 1, 5);
+
+		BorderPane tabProd = new BorderPane();
 
 		GridPane grid = new GridPane();
+		tabProd.setTop(grid);
+		tabProd.setCenter(tvProd);
 		grid.add(new Label("Nome: "), 0, 0);
 		grid.add(txtNome, 1, 0);
 		grid.add(new Label("Preço: "), 0, 1);
@@ -155,17 +305,17 @@ public class ProdutoBoundary extends Application {
 		grid.add(new Label("Marca: "), 0, 2);
 		grid.add(txtMarca, 1, 2);
 
-		ligacoes();
-		abastecerTableView();
+		ligacoesProdutos();
+		abastecerTableViewProdutos();
 
 		Button btnNovo = new Button("Novo");
-		btnNovo.setOnAction(e -> control.novo());
+		btnNovo.setOnAction(e -> controlProd.novo());
 
 		Button btnSalvar = new Button("Salvar");
-		btnSalvar.setOnAction(e -> adicionar());
+		btnSalvar.setOnAction(e -> adicionarProd());
 
 		Button btnPesquisar = new Button("Pesquisar");
-		btnPesquisar.setOnAction(e -> pesquisar());
+		btnPesquisar.setOnAction(e -> pesquisarProd());
 
 		FlowPane painelBotoes = new FlowPane();
 		painelBotoes.getChildren().addAll(btnSalvar, btnPesquisar);
@@ -173,21 +323,24 @@ public class ProdutoBoundary extends Application {
 		grid.add(btnNovo, 0, 3);
 		grid.add(painelBotoes, 1, 3);
 
+		TabPane tabPane = new TabPane();
+
 		Tab tab1 = new Tab();
-		tab1.setText("produtos");
-		tab1.setContent(grid); 
+		tab1.setText("Produtos");
+		tab1.setContent(tabProd);
 
 		Tab tab2 = new Tab();
-		tab2.setText("funcionarios");
-		tab2.setContent(new StackPane()); 
+		tab2.setText("Funcionários");
+		tab2.setContent(tabFun);
 
 		tabPane.getTabs().addAll(tab1, tab2);
 
 		StackPane root = new StackPane();
 		root.getChildren().add(tabPane);
+		Scene scene = new Scene(root, 800, 600);
 
-		Scene scn = new Scene(root, 800, 600);
-		stage.setScene(scn);
+		stage.setScene(scene);
+		stage.setTitle("Mercadin Brabo");
 		stage.show();
 	}
 

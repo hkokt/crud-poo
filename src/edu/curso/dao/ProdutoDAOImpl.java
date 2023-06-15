@@ -30,6 +30,7 @@ public class ProdutoDAOImpl implements ProdutoDAO {
 		st.setString(1, prod.getNome());
 		st.setDouble(2, prod.getPreco());
 		st.setString(3, prod.getMarca());
+		
 		st.executeUpdate();
 
 		ResultSet rs = st.getGeneratedKeys();
